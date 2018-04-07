@@ -32,9 +32,14 @@ from flask import make_response
 # Flask app should start in global layout
 app = Flask(__name__)
 
+@app.route('/', methods=['GET'])
+def verify():
+    #Webhook verification
+    return "Project verified", 200
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    print("********")
     req = request.get_json(silent=True, force=True)
 
     print("Request:")
@@ -50,9 +55,26 @@ def webhook():
 
 
 def processRequest(req):
-    if req.get("result").get("action") != "yahooWeatherForecast":
+    if req.get("result").get("action") != "findBranchLink":
         return {}
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
+    result = req.get("result")
+    print("A1")
+    parameters = result.get("parameters")
+    print(parameters)
+    branch = parameters.get("branch")
+    print(branch)
+    link = {'CSE': 'www.google.co.in'}
+    speech = ("The link is " + str(link[branch]))
+    print("Response:")
+    print(speech)
+    return {
+        "speech": speech,
+        "displayText": speech,
+        "source": "Heere"
+        }
+
+    
+    '''baseurl = "https://query.yahooapis.com/v1/public/yql?"
     yql_query = makeYqlQuery(req)
     if yql_query is None:
         return {}
@@ -110,11 +132,12 @@ def makeWebhookResult(data):
         # "data": data,
         # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
-    }
+    }'''
+    
 
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 80))
 
     print("Starting app on port %d" % port)
 
