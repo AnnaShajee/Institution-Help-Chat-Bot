@@ -37,6 +37,10 @@ def verify():
     #Webhook verification
     return "Project verified", 200
 
+@app.route('/webhook', methods=['GET'])
+def verifyweb():
+    return "Webhook verified", 200
+
 @app.route('/webhook', methods=['POST'])
 def webhook():
     print("********")
